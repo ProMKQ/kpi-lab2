@@ -3,29 +3,54 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"os"
+	"strings"
+
 	lab2 "github.com/ProMKQ/kpi-lab2"
 )
 
-var (
-	inputExpression = flag.String("e", "", "Expression to compute")
-	// TODO: Add other flags support for input and output configuration.
-)
-
 func main() {
+	exprFlag := flag.String("e", "", "Expression in postfix notation")
+	fileFlag := flag.String("t", "", "Input file containing the expression")
+	outFlag := flag.String("o", "", "Output file for the result")
 	flag.Parse()
 
-	// TODO: Change this to accept input from the command line arguments as described in the task and
-	//       output the results using the ComputeHandler instance.
-	//       handler := &lab2.ComputeHandler{
-	//           Input: {construct io.Reader according the command line parameters},
-	//           Output: {construct io.Writer according the command line parameters},
-	//       }
-	//       err := handler.Compute()
+	if *exprFlag != "" && *fileFlag != "" {
+		fmt.Fprintln(os.Stderr, "Error: specify either -e or -t, not both")
+		os.Exit(1)
+	}
 
-	res, err := lab2.PostfixToInfix("4 2 - 3 2 ^ * 5 +")
-	if err != nil {
-		fmt.Println(err)
+	var input io.Reader
+	if *exprFlag != "" {
+		input = strings.NewReader(*exprFlag)
+	} else if *fileFlag != "" {
+		f, err := os.Open(*fileFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: failed to open input file: %v\n", err)
+			os.Exit(1)
+		}
+		defer f.Close()
+		input = f
 	} else {
-		fmt.Println(res)
+		fmt.Fprintln(os.Stderr, "Error: no input provided. Use -e or -t")
+		os.Exit(1)
+	}
+
+	var output io.Writer = os.Stdout
+	if *outFlag != "" {
+		f, err := os.Create(*outFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: failed to create output file: %v\n", err)
+			os.Exit(1)
+		}
+		defer f.Close()
+		output = f
+	}
+
+	handler := lab2.ComputeHandler{Input: input, Output: output}
+	if err := handler.Compute(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
 	}
 }
