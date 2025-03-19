@@ -30,7 +30,7 @@ func (c *ComputeHandler) Compute() error {
 
 	_, err = fmt.Fprintln(c.Output, infix)
 	if err != nil {
-		return fmt.Errorf("failed to write Output: %w", err)
+		return fmt.Errorf("failed to write to output: %w", err)
 	}
 
 	return nil
