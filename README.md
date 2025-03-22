@@ -11,4 +11,6 @@
 - >[Успішна збірка](#)
 - >[Завалена збірка](#)
 
-Привіт
+![Go Build](https://github.com/ProMKQ/kpi-lab2/actions/workflows/build.yml/badge.svg)
+
+<!-- G -->
