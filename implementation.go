@@ -31,7 +31,7 @@ func PostfixToInfix(input string) (string, error) {
 			}
 			right := s.Pop()
 			left := s.Pop()
-			s.Push("(" + left + " " + token + " " + right + ")")
+			s.Push("(" + right + " " + token + " " + left + ")")
 		} else if _, err := strconv.Atoi(token); err == nil {
 			s.Push(token)
 		} else {
